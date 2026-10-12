@@ -1,5 +1,11 @@
 <!-- License: see LICENSE (earlier Apache-2.0 grants remain in force) -->
 
+## 欢迎交流 / Discussion and contributions
+
+欢迎交流、分享研究发现和使用反馈。欢迎通过 [Issues](https://github.com/radium-wang/ricoh-gr4-firmware-analysis-and-feature-expansion/issues) 讨论问题与建议，也欢迎提交 [Pull Requests](https://github.com/radium-wang/ricoh-gr4-firmware-analysis-and-feature-expansion/pulls) 改进代码、文档和测试。
+
+Discussion, research findings and feedback are welcome. Please use [Issues](https://github.com/radium-wang/ricoh-gr4-firmware-analysis-and-feature-expansion/issues) for questions and suggestions, and submit [Pull Requests](https://github.com/radium-wang/ricoh-gr4-firmware-analysis-and-feature-expansion/pulls) to improve code, documentation and tests.
+
 # Ricoh GR IV Firmware Analysis and Feature Expansion
 
 ## English
