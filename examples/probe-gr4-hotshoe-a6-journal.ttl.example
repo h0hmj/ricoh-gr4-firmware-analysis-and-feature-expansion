@@ -1,0 +1,296 @@
+; GR IV 01.11.10.07 A6 power experiment v4; completed on camera; tested sequence did not wake GF-2.
+; Uses the small scalar/GOTO/literal-sendln structure proven by v3.
+; ON after startup, then observe for 120s without manually switching the lamp.
+; Checking pauses inside each power block. Logs persist after every frame.
+; Later boots restore checking before skipping the existing HSP4.TXT marker.
+
+mpause 15000
+sendln 'HotshoeCheckDisable 0'
+r = result
+filesearch 'C:\HSP4.TXT'
+if result = 1 then
+    end
+endif
+filecreate f 'C:\HSP4.TXT'
+if f < 0 then
+    end
+endif
+filewriteln f 'A6 power experiment v4; each step journaled'
+filewriteln f 'Initial restore:'
+int2str reply r
+filewriteln f reply
+fileclose f
+if r != 0 then
+    end
+endif
+s = -1
+d = 0
+a = -999
+z = -999
+q = -999
+sendln 'SYS_buildinfo'
+z = result
+if z != 0 then
+    goto h4_abort
+endif
+sendln 'HotshoeCommType1 0 0 0'
+z = result
+if z != 0 then
+    goto h4_abort
+endif
+sendln 'HotshoeCommType1 0 1 0'
+z = result
+if z != 0 then
+    goto h4_abort
+endif
+s = 0
+
+:h4_next
+x = -999
+y = -999
+t = -999
+r = -999
+fileopen f 'C:\HSP4.TXT' 1
+if f < 0 then
+    goto h4_abort
+endif
+filewriteln f 'BEGIN step:'
+int2str reply s
+filewriteln f reply
+fileclose f
+if s = 0 then
+    goto h4_open
+endif
+if s = 2 then
+    goto h4_open
+endif
+if s = 7 then
+    goto h4_open
+endif
+goto h4_select
+
+:h4_open
+sendln 'HotshoeCheckDisable 1'
+z = result
+if z != 0 then
+    goto h4_abort
+endif
+mpause 1000
+
+:h4_select
+if s = 1 then
+    goto h4_c1
+endif
+if s = 2 then
+    goto h4_off
+endif
+if s = 7 then
+    goto h4_off
+endif
+if s = 8 then
+    p = 2
+    goto h4_a6
+endif
+if s = 6 then
+    goto h4_status
+endif
+if s = 10 then
+    goto h4_status
+endif
+n = 1
+sendln 'HotshoeCommType1 1 192 1'
+t = result
+goto h4_received
+
+:h4_c1
+n = 2
+sendln 'HotshoeCommType1 1 193 2'
+t = result
+goto h4_received
+
+:h4_status
+if a != 165 then
+    t = -998
+    goto h4_finish_step
+endif
+n = 2
+sendln 'HotshoeCommType1 1 194 2'
+t = result
+goto h4_received
+
+:h4_off
+d = 1
+p = 0
+:h4_a6
+sendln 'HotshoeCommType1 0 0 1'
+z = result
+if z != 0 then
+    goto h4_abort
+endif
+if p = 0 then
+    sendln 'HotshoeCommType1 0 1 0'
+    z = result
+endif
+if p = 2 then
+    sendln 'HotshoeCommType1 0 1 2'
+    z = result
+endif
+if z != 0 then
+    goto h4_abort
+endif
+n = 0
+sendln 'HotshoeCommType1 1 166 2'
+t = result
+
+:h4_received
+z = t
+if t != 0 then
+    goto h4_abort
+endif
+if n > 0 then
+    sendln 'HotshoeCommType1 2 0'
+    x = result
+    if x < 0 then
+        z = x
+        goto h4_abort
+    endif
+endif
+if n = 2 then
+    sendln 'HotshoeCommType1 2 1'
+    y = result
+    if y < 0 then
+        z = y
+        goto h4_abort
+    endif
+endif
+if n = 1 then
+    a = x
+endif
+if s = 8 then
+    d = 0
+endif
+
+:h4_finish_step
+if s = 1 then
+    sendln 'HotshoeCheckDisable 0'
+    r = result
+endif
+if s = 6 then
+    sendln 'HotshoeCheckDisable 0'
+    r = result
+endif
+if s = 10 then
+    sendln 'HotshoeCheckDisable 0'
+    r = result
+endif
+fileopen f 'C:\HSP4.TXT' 1
+if f < 0 then
+    goto h4_abort
+endif
+filewriteln f 'RX0 / RX1 / local transfer / this-step restore:'
+int2str reply x
+filewriteln f reply
+int2str reply y
+filewriteln f reply
+int2str reply t
+filewriteln f reply
+int2str reply r
+filewriteln f reply
+filewriteln f 'END step:'
+int2str reply s
+filewriteln f reply
+fileclose f
+if s = 0 then
+    if x != 165 then
+        goto h4_abort
+    endif
+endif
+if s = 1 then
+    if r != 0 then
+        goto h4_abort
+    endif
+    if x != 17 then
+        if x != 18 then
+            goto h4_abort
+        endif
+    endif
+    mpause 1000
+endif
+if s = 2 then
+    mpause 20000
+endif
+if s = 3 then
+    mpause 1000
+endif
+if s = 4 then
+    mpause 1000
+endif
+if s = 6 then
+    if r != 0 then
+        goto h4_abort
+    endif
+    mpause 1000
+endif
+if s = 7 then
+    mpause 20000
+endif
+if s = 8 then
+    mpause 5000
+endif
+s = s + 1
+if s < 11 then
+    goto h4_next
+endif
+if r != 0 then
+    goto h4_abort
+endif
+fileopen f 'C:\HSP4.TXT' 1
+if f < 0 then
+    end
+endif
+filewriteln f 'ALL STEPS COMPLETE; checking restored.'
+filewriteln f '-999 means unused/not restored at this step; -998 means C2 skipped without A5.'
+fileclose f
+end
+
+:h4_abort
+e = z
+if d != 1 then
+    goto h4_abort_restore
+endif
+sendln 'HotshoeCheckDisable 1'
+z = result
+if z != 0 then
+    goto h4_abort_restore
+endif
+mpause 1000
+sendln 'HotshoeCommType1 0 0 1'
+z = result
+if z != 0 then
+    goto h4_abort_restore
+endif
+sendln 'HotshoeCommType1 0 1 2'
+z = result
+if z != 0 then
+    goto h4_abort_restore
+endif
+sendln 'HotshoeCommType1 1 166 2'
+q = result
+:h4_abort_restore
+sendln 'HotshoeCheckDisable 0'
+r = result
+fileopen f 'C:\HSP4.TXT' 1
+if f < 0 then
+    end
+endif
+filewriteln f 'ABORT step / prior local return / default A6 attempt / final restore:'
+int2str reply s
+filewriteln f reply
+int2str reply e
+filewriteln f reply
+int2str reply q
+filewriteln f reply
+int2str reply r
+filewriteln f reply
+fileclose f
+end

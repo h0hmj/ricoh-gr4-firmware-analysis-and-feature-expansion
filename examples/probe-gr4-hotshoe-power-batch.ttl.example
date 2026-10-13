@@ -1,0 +1,353 @@
+; GR IV 01.11.10.07 native hotshoe power batch v2.
+; SUPERSEDED: first camera run produced only the initial header, no completion.
+; Do not deploy v2 again; use the short recovery/diagnostic v3 instead.
+; Original Script interface only. Native C0 query was camera-tested.
+; This expanded batch is not yet camera-tested. No firmware/code/table writes.
+; User: turn lamp ON just after camera startup, OFF around 30 s, ON around 75 s.
+; At 75 s, leave it ON if an earlier query already woke it; do not toggle it OFF.
+; Stay idle until at least 180 s. All times are approximate, including transfers.
+; Uses C0-C5 reads and the original A6 payloads 01 00 / 01 02 only.
+; No A0/main output command or flash firing command is sent by this script.
+; Normal attachment checking stays disabled during the experiment so that
+; normal polling/output does not intentionally interleave with our stages.
+; All received data is held in variables; SD logging follows restoration.
+; Existing C:\HSB2.TXT stops repeat runs. Preserve it before another attempt.
+
+filesearch 'C:\HSB2.TXT'
+if result = 1 then
+    end
+endif
+filecreate hs_logf 'C:\HSB2.TXT'
+if hs_logf < 0 then
+    end
+endif
+filewriteln hs_logf 'GR IV native hotshoe power batch v2 started'
+filewriteln hs_logf 'Actions: lamp ON at startup; OFF around 30s; ON around 75s.'
+filewriteln hs_logf 'C0=165 is communication ACK, not proof of full lamp startup.'
+fileclose hs_logf
+filesearch 'C:\HSB2.TXT'
+if result != 1 then
+    end
+endif
+
+hs_failed = 0
+hs_error = 0
+hs_disable_ret = -999
+hs_restore_ret = -999
+hs_stage = 0
+hs_on = 'not reached'
+hs_off_train = 'not reached'
+hs_off_c0 = 'not reached'
+hs_off_a6 = 'not reached'
+hs_reon = 'not reached'
+hs_auto_train = 'not reached'
+hs_auto_c0 = 'not reached'
+hs_auto_a6 = 'not reached'
+hs_manual_a6_ret = -999
+hs_shutdown1_ret = -999
+hs_shutdown2_ret = -999
+hs_default_ret = -999
+hs_need_default = 0
+hs_cleanup_ret = -999
+hs_abort_error = 0
+
+sendln 'SYS_buildinfo'
+hs_build_ret = result
+if hs_build_ret != 0 then
+    goto hs_report
+endif
+
+mpause 15000
+sendln 'HotshoeCheckDisable 1'
+hs_disable_ret = result
+if hs_disable_ret != 0 then
+    goto hs_restore
+endif
+mpause 1000
+
+; Approximately 16 s: normal ON identity/status/capability baseline.
+hs_stage = 1
+call hs_capture
+hs_on = hs_buf
+if hs_failed != 0 then
+    goto hs_restore
+endif
+if hs_ack != 165 then
+    goto hs_restore
+endif
+if hs_kind != 17 then
+    if hs_kind != 18 then
+        goto hs_restore
+    endif
+endif
+
+; Approximately 45 s: user has switched the lamp OFF around 30 s.
+mpause 29000
+hs_stage = 2
+call hs_c0_train
+hs_off_train = hs_train
+if hs_failed != 0 then
+    goto hs_restore
+endif
+call hs_capture
+hs_off_c0 = hs_buf
+if hs_failed != 0 then
+    goto hs_restore
+endif
+
+; Original normal A6 payload; not claimed to be a wake command.
+hs_a6_low = 2
+call hs_send_a6
+hs_manual_a6_ret = hs_error
+if hs_failed != 0 then
+    goto hs_restore
+endif
+mpause 5000
+call hs_capture
+hs_off_a6 = hs_buf
+if hs_failed != 0 then
+    goto hs_restore
+endif
+
+; Approximately 90 s: user switched the lamp back ON around 75 s.
+mpause 37000
+hs_stage = 3
+call hs_capture
+hs_reon = hs_buf
+if hs_failed != 0 then
+    goto hs_restore
+endif
+if hs_ack != 165 then
+    goto hs_restore
+endif
+if hs_kind != 17 then
+    if hs_kind != 18 then
+        goto hs_restore
+    endif
+endif
+
+; Reproduce the original camera shutdown payload while normal polling is off.
+hs_stage = 4
+hs_a6_low = 0
+hs_need_default = 1
+call hs_send_a6
+hs_shutdown1_ret = hs_error
+if hs_failed != 0 then
+    goto hs_restore
+endif
+mpause 20000
+call hs_c0_train
+hs_auto_train = hs_train
+if hs_failed != 0 then
+    goto hs_restore
+endif
+call hs_capture
+hs_auto_c0 = hs_buf
+if hs_failed != 0 then
+    goto hs_restore
+endif
+
+; Repeat the shutdown payload; test normal A6 before any further C0 query.
+hs_stage = 5
+hs_a6_low = 0
+call hs_send_a6
+hs_shutdown2_ret = hs_error
+if hs_failed != 0 then
+    goto hs_restore
+endif
+mpause 20000
+hs_a6_low = 2
+call hs_send_a6
+hs_default_ret = hs_error
+if hs_failed != 0 then
+    goto hs_restore
+endif
+hs_need_default = 0
+mpause 5000
+call hs_capture
+hs_auto_a6 = hs_buf
+
+:hs_restore
+hs_abort_error = hs_error
+if hs_need_default = 1 then
+    hs_a6_low = 2
+    call hs_send_a6
+    hs_cleanup_ret = hs_error
+endif
+sendln 'HotshoeCheckDisable 0'
+hs_restore_ret = result
+
+:hs_report
+fileopen hs_logf 'C:\HSB2.TXT' 1
+if hs_logf < 0 then
+    end
+endif
+filewriteln hs_logf 'Values are decimal; C1 is kind/subkind, C2 status/flags, C3/C4 raw ranges, C5 raw correction input.'
+filewriteln hs_logf 'ON baseline:'
+filewriteln hs_logf hs_on
+filewriteln hs_logf 'Manual OFF: three C0 replies, then snapshot:'
+filewriteln hs_logf hs_off_train
+filewriteln hs_logf hs_off_c0
+filewriteln hs_logf 'Manual OFF after A6 01 02 and 5s, then C0 snapshot:'
+filewriteln hs_logf hs_off_a6
+filewriteln hs_logf 'User manually ON again:'
+filewriteln hs_logf hs_reon
+filewriteln hs_logf 'After A6 01 00 and 20s: three C0 replies, then snapshot:'
+filewriteln hs_logf hs_auto_train
+filewriteln hs_logf hs_auto_c0
+filewriteln hs_logf 'After second A6 01 00 and 20s, A6 01 02 and 5s, then C0 snapshot:'
+filewriteln hs_logf hs_auto_a6
+filewriteln hs_logf 'A6 transfer returns (0 is local control flow, not a lamp ACK):'
+int2str hs_tmp hs_manual_a6_ret
+filewriteln hs_logf hs_tmp
+int2str hs_tmp hs_shutdown1_ret
+filewriteln hs_logf hs_tmp
+int2str hs_tmp hs_shutdown2_ret
+filewriteln hs_logf hs_tmp
+int2str hs_tmp hs_default_ret
+filewriteln hs_logf hs_tmp
+filewriteln hs_logf 'Early-exit default A6 attempt (-999 means not needed):'
+int2str hs_tmp hs_cleanup_ret
+filewriteln hs_logf hs_tmp
+filewriteln hs_logf 'Shell / Disable / Last stage / Last local command return / Restore:'
+int2str hs_tmp hs_build_ret
+filewriteln hs_logf hs_tmp
+int2str hs_tmp hs_disable_ret
+filewriteln hs_logf hs_tmp
+int2str hs_tmp hs_stage
+filewriteln hs_logf hs_tmp
+int2str hs_tmp hs_abort_error
+filewriteln hs_logf hs_tmp
+int2str hs_tmp hs_restore_ret
+filewriteln hs_logf hs_tmp
+filewriteln hs_logf 'Batch ended. Communication replies do not establish lamp power/charge state.'
+fileclose hs_logf
+end
+
+:hs_read
+hs_b0 = -999
+hs_b1 = -999
+sendln 'HotshoeCommType1 0 0 0'
+hs_error = result
+if hs_error != 0 then
+    hs_failed = 1
+    return
+endif
+sendln 'HotshoeCommType1 0 1 0'
+hs_error = result
+if hs_error != 0 then
+    hs_failed = 1
+    return
+endif
+hs_line = 'HotshoeCommType1 1 '
+int2str hs_tmp hs_cmd
+strconcat hs_line hs_tmp
+strconcat hs_line ' '
+int2str hs_tmp hs_n
+strconcat hs_line hs_tmp
+sendln hs_line
+hs_error = result
+if hs_error != 0 then
+    hs_failed = 1
+    return
+endif
+sendln 'HotshoeCommType1 2 0'
+hs_b0 = result
+if hs_b0 < 0 then
+    hs_error = hs_b0
+    hs_failed = 1
+    return
+endif
+if hs_n = 2 then
+    sendln 'HotshoeCommType1 2 1'
+    hs_b1 = result
+    if hs_b1 < 0 then
+        hs_error = hs_b1
+        hs_failed = 1
+    endif
+endif
+return
+
+:hs_capture
+hs_buf = ''
+hs_ack = -999
+hs_kind = -999
+hs_i = 0
+while hs_i < 6
+    hs_cmd = 192 + hs_i
+    hs_n = 2
+    if hs_i = 0 then
+        hs_n = 1
+    endif
+    if hs_i = 5 then
+        hs_n = 1
+    endif
+    call hs_read
+    strconcat hs_buf ' C'
+    int2str hs_tmp hs_i
+    strconcat hs_buf hs_tmp
+    strconcat hs_buf '='
+    int2str hs_tmp hs_b0
+    strconcat hs_buf hs_tmp
+    if hs_n = 2 then
+        strconcat hs_buf ','
+        int2str hs_tmp hs_b1
+        strconcat hs_buf hs_tmp
+    endif
+    if hs_failed != 0 then
+        return
+    endif
+    if hs_i = 0 then
+        hs_ack = hs_b0
+        if hs_ack != 165 then
+            strconcat hs_buf ' (not A5; C1-C5 skipped)'
+            return
+        endif
+    endif
+    if hs_i = 1 then
+        hs_kind = hs_b0
+    endif
+    hs_i = hs_i + 1
+endwhile
+return
+
+:hs_c0_train
+hs_train = ''
+hs_attempt = 0
+while hs_attempt < 3
+    hs_cmd = 192
+    hs_n = 1
+    call hs_read
+    int2str hs_tmp hs_b0
+    strconcat hs_train hs_tmp
+    strconcat hs_train ' '
+    if hs_failed != 0 then
+        return
+    endif
+    hs_attempt = hs_attempt + 1
+    mpause 1000
+endwhile
+return
+
+:hs_send_a6
+sendln 'HotshoeCommType1 0 0 1'
+hs_error = result
+if hs_error != 0 then
+    hs_failed = 1
+    return
+endif
+hs_line = 'HotshoeCommType1 0 1 '
+int2str hs_tmp hs_a6_low
+strconcat hs_line hs_tmp
+sendln hs_line
+hs_error = result
+if hs_error != 0 then
+    hs_failed = 1
+    return
+endif
+sendln 'HotshoeCommType1 1 166 2'
+hs_error = result
+if hs_error != 0 then
+    hs_failed = 1
+endif
+return

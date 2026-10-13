@@ -1,0 +1,99 @@
+; GR IV 1.11.10.7 native hotshoe query candidate; NOT camera-tested.
+; Requires the original Script feature and normal hotshoe checking enabled.
+; Uses decimal arguments. Sends exactly one C0 request plus one 00 data byte.
+; No firmware/code/table writes; temporary native hotshoe state changes occur.
+; Run only while idle, with no other hotshoe test or shooting in progress.
+; C:\HSC0.TXT prevents automatic repetition on the next startup.
+; Waits 15 seconds before querying: for baseline, manually turn the lamp on.
+; For off-state trials, do not touch the lamp during this wait.
+
+filesearch 'C:\HSC0.TXT'
+if result = 1 then
+    end
+endif
+
+filecreate logf 'C:\HSC0.TXT'
+if logf < 0 then
+    end
+endif
+filewriteln logf 'GR IV native C0 query candidate - not a proven wake command'
+fileclose logf
+filesearch 'C:\HSC0.TXT'
+if result != 1 then
+    end
+endif
+
+prepare_return = -999
+transfer_return = -999
+received_byte = -999
+
+sendln 'SYS_buildinfo'
+build_return = result
+if build_return != 0 then
+    goto hsc_shell_failed
+endif
+
+; Keep normal checking enabled during the preparation window.
+mpause 15000
+
+sendln 'HotshoeCheckDisable 1'
+disable_return = result
+if disable_return != 0 then
+    goto hsc_restore
+endif
+
+mpause 1000
+
+sendln 'HotshoeCommType1 0 0 0'
+prepare_return = result
+if prepare_return != 0 then
+    goto hsc_restore
+endif
+
+sendln 'HotshoeCommType1 1 192 1'
+transfer_return = result
+if transfer_return != 0 then
+    goto hsc_restore
+endif
+
+sendln 'HotshoeCommType1 2 0'
+received_byte = result
+
+:hsc_restore
+sendln 'HotshoeCheckDisable 0'
+restore_return = result
+fileopen logf 'C:\HSC0.TXT' 1
+if logf < 0 then
+    end
+endif
+filewriteln logf 'Command returns (-999 means step was not reached):'
+filewriteln logf 'Disable normal checking:'
+int2str reply disable_return
+filewriteln logf reply
+filewriteln logf 'Prepare TX[0]:'
+int2str reply prepare_return
+filewriteln logf reply
+filewriteln logf 'Transfer sequence:'
+int2str reply transfer_return
+filewriteln logf reply
+filewriteln logf 'RX byte in decimal (165=A5 candidate; 201=C9 may be timeout):'
+int2str reply received_byte
+filewriteln logf reply
+filewriteln logf 'A5 alone does not prove full lamp startup.'
+filewriteln logf 'Restore normal checking return:'
+int2str reply restore_return
+filewriteln logf reply
+filewriteln logf 'Single query sequence finished.'
+fileclose logf
+end
+
+:hsc_shell_failed
+int2str reply build_return
+fileopen logf 'C:\HSC0.TXT' 1
+if logf < 0 then
+    end
+endif
+filewriteln logf 'Shell precheck failed; no hotshoe command sent:'
+filewriteln logf reply
+fileclose logf
+end

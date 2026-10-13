@@ -28,3 +28,9 @@ The reports below document existing findings. Static addresses refer to the reco
 先确定样本和地址空间，再阅读 Debug 报告中的配置、消息、控制器与按键追踪。用日志核对实机观察及被撤回的推测，然后选择待研究问题开展实验。
 
 The shutdown-image guides are collected under [feature expansion](../extensions/README.md). The documented resource interface is not a general firmware installer.
+
+## GR IV / GF-2 flash research (2026-10-13)
+
+[Protocol, identity, calibration and power experiments](gr4-flash-research-summary.md)
+
+GF-2 kind 0x11 is verified on the tested setup. The completed v4 C0/A6 sequence did not wake the lamp. v5 user observations confirm normal manual recovery; its SD log is still pending. Nikon bridging remains a proposal.

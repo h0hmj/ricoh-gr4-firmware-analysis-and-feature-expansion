@@ -32,3 +32,9 @@ Run [write-goodbye](write-goodbye.ttl.example), then compare `NEWGB.JPG` with `G
 These older templates check file existence, not model or equal lengths. They target `A:\Resource\Jpeg\GoodBye.jpg` and must not be used on HDF/Monochrome or Urban. Keep their backup names separate from family templates. The original copy experiment was camera-tested; later guards and the restore template have offline tests only.
 
 旧模板不检查机型或等长条件，仅用于普通 GR IV。不要混用系列模板的备份名。原始复制实验有实机结果，后加保护及恢复模板仅经过离线测试。
+
+## GR IV / GF-2 flash research (2026-10-13)
+
+[Protocol, live results and probe instructions](../docs/research/gr4-flash-research-summary.md)
+
+GF-2 kind 0x11 is verified on the tested setup. The completed v4 C0/A6 sequence did not wake the lamp. v5 user observations confirm normal manual recovery; its SD log is still pending. Nikon bridging remains a proposal.
