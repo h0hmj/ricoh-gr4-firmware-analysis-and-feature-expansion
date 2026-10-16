@@ -1,0 +1,417 @@
+{
+  "research_date": "2026-10-13",
+  "publication_date": "2026-10-16",
+  "static_audit": {
+    "sample_sha256": "c4e597c7c9ca1bc181b30e35139ed90a4fd876ddcca14f12be0e00b6702233ae",
+    "scope": "offline static analysis; pool VAs have identity initial mappings; no hardware capacity measurement",
+    "components": {
+      "device_tree": {
+        "offset": "0x13f28a0",
+        "size": 32690,
+        "sha256": "dba23f36e17ecdf9316e79301c65d30ef6f534b83615ab7943158ddd73d628d5"
+      },
+      "kernel": {
+        "offset": "0x13fb7e0",
+        "size": 5709552,
+        "sha256": "9e6bdf2174b6beec0252ce4c8d58ccdb5a13631401f48e10b4e4d2553d2c9eca"
+      },
+      "initfs": {
+        "offset": "0x196d7f0",
+        "size": 21847552,
+        "sha256": "7710b4eecdcf0ad335b9ee89c0d1b20edd036f4748d4c1991027933048cac6a3"
+      }
+    },
+    "linux": {
+      "banks": [
+        {
+          "base": "0x40000000",
+          "end_exclusive": "0x43000000",
+          "size_mib": 48.0
+        },
+        {
+          "base": "0x44f00000",
+          "end_exclusive": "0x4bf00000",
+          "size_mib": 112.0
+        }
+      ],
+      "declared_ram_mib": 160.0,
+      "memory_reg_decoded_offset": "0x13f2bd0",
+      "slram": {
+        "base": "0x43000000",
+        "end_exclusive": "0x43000001",
+        "size_mib": 9.5367431640625e-07
+      },
+      "bootargs": "consoleblank=0 loglevel=0 rdinit=/sbin/finit root=/dev/mtdblock0 slram=slram0,0x43000000,+0x01F00000 rootwait ro console=null"
+    },
+    "kernel": {
+      "uncompressed_sha256": "e56cf6f1966e65fe705f475e660d4cc4921af6292deb7a818a86bf240874402e",
+      "config_sha256": "68c1078da306a0d791c66ed591200f11637dbbd355d6dcec74c16acd05b624d6",
+      "lz4_stream_zimage_offset": "0x3f05",
+      "ikconfig_uncompressed_offset": "0x5fcfc4",
+      "settings": {
+        "CONFIG_VMSPLIT_2G": "y",
+        "CONFIG_PAGE_OFFSET": "0x80000000",
+        "CONFIG_HIGHMEM": "y",
+        "CONFIG_ARM_LPAE": "n",
+        "CONFIG_OF_RESERVED_MEM": "y",
+        "CONFIG_FLATMEM": "y",
+        "CONFIG_CMA_SIZE_MBYTES": "16"
+      }
+    },
+    "rtos_pools": [
+      {
+        "base": "0x59100000",
+        "end_exclusive": "0x59600000",
+        "size_mib": 5.0,
+        "id": 1,
+        "name": "SYSTEM",
+        "initialization_call": "0x538e394c"
+      },
+      {
+        "base": "0x59600000",
+        "end_exclusive": "0x5a600000",
+        "size_mib": 16.0,
+        "id": 2,
+        "name": "NEWOPERATOR",
+        "initialization_call": "0x538e3990"
+      },
+      {
+        "base": "0x5a600000",
+        "end_exclusive": "0x5a680000",
+        "size_mib": 0.5,
+        "id": 3,
+        "name": "AUDIO",
+        "initialization_call": "0x538e39d4"
+      },
+      {
+        "base": "0x5a680000",
+        "end_exclusive": "0x5b580000",
+        "size_mib": 15.0,
+        "id": 4,
+        "name": "FILE",
+        "initialization_call": "0x538e3a08"
+      },
+      {
+        "base": "0x5b580000",
+        "end_exclusive": "0x5b600000",
+        "size_mib": 0.5,
+        "id": 5,
+        "name": "USB",
+        "initialization_call": "0x538e3a40"
+      },
+      {
+        "base": "0x5b600000",
+        "end_exclusive": "0x5c000000",
+        "size_mib": 10.0,
+        "id": 6,
+        "name": "HOST",
+        "initialization_call": "0x538e3a78"
+      },
+      {
+        "base": "0x5c000000",
+        "end_exclusive": "0x5c800000",
+        "size_mib": 8.0,
+        "id": 7,
+        "name": "CAPTURERECIPE",
+        "initialization_call": "0x538e3aa4"
+      },
+      {
+        "base": "0x5c800000",
+        "end_exclusive": "0x5cc00000",
+        "size_mib": 4.0,
+        "id": 8,
+        "name": "FACEDETECT",
+        "initialization_call": "0x538e3ad0"
+      },
+      {
+        "base": "0x5cc00000",
+        "end_exclusive": "0x5cd00000",
+        "size_mib": 1.0,
+        "id": 9,
+        "name": "IQ",
+        "initialization_call": "0x538e3b04"
+      },
+      {
+        "base": "0x5cd00000",
+        "end_exclusive": "0x5cd20000",
+        "size_mib": 0.125,
+        "id": 10,
+        "name": "PPU",
+        "initialization_call": "0x538e3b3c"
+      },
+      {
+        "base": "0x5cd20000",
+        "end_exclusive": "0x5d520000",
+        "size_mib": 8.0,
+        "id": 11,
+        "name": "AF",
+        "initialization_call": "0x538e3b80"
+      },
+      {
+        "base": "0x5d520000",
+        "end_exclusive": "0x5d7a0000",
+        "size_mib": 2.5,
+        "id": 12,
+        "name": "APP",
+        "initialization_call": "0x538e3bb4"
+      },
+      {
+        "base": "0x5d7a0000",
+        "end_exclusive": "0x5d8a0000",
+        "size_mib": 1.0,
+        "id": 13,
+        "name": "INFO",
+        "initialization_call": "0x538e3be8"
+      },
+      {
+        "base": "0x5d8a0000",
+        "end_exclusive": "0x80000000",
+        "size_mib": 551.375,
+        "id": 14,
+        "name": "IMAGE1",
+        "initialization_call": "0x538e3c24"
+      },
+      {
+        "base": "0xa0000000",
+        "end_exclusive": "0xe0000000",
+        "size_mib": 1024.0,
+        "id": 15,
+        "name": "IMAGE2",
+        "initialization_call": "0x538e3c4c"
+      }
+    ],
+    "naive_contiguous_1gib": {
+      "window": {
+        "base": "0x40000000",
+        "end_exclusive": "0x80000000",
+        "size_mib": 1024.0
+      },
+      "conflicts": [
+        {
+          "base": "0x43000000",
+          "end_exclusive": "0x43000001",
+          "size_mib": 9.5367431640625e-07,
+          "role": "slram root filesystem"
+        },
+        {
+          "base": "0x4ff00000",
+          "end_exclusive": "0x50000000",
+          "size_mib": 1.0,
+          "role": "RTOS/Linux shared fields"
+        },
+        {
+          "base": "0x53000000",
+          "end_exclusive": "0x55000000",
+          "size_mib": 32.0,
+          "role": "RTOS initial read-only sections"
+        },
+        {
+          "base": "0x55000000",
+          "end_exclusive": "0x558372d4",
+          "size_mib": 8.215534210205078,
+          "role": "RTOS initialized data and BSS"
+        },
+        {
+          "base": "0x59100000",
+          "end_exclusive": "0x59600000",
+          "size_mib": 5.0,
+          "role": "SYSTEM"
+        },
+        {
+          "base": "0x59600000",
+          "end_exclusive": "0x5a600000",
+          "size_mib": 16.0,
+          "role": "NEWOPERATOR"
+        },
+        {
+          "base": "0x5a600000",
+          "end_exclusive": "0x5a680000",
+          "size_mib": 0.5,
+          "role": "AUDIO"
+        },
+        {
+          "base": "0x5a680000",
+          "end_exclusive": "0x5b580000",
+          "size_mib": 15.0,
+          "role": "FILE"
+        },
+        {
+          "base": "0x5b580000",
+          "end_exclusive": "0x5b600000",
+          "size_mib": 0.5,
+          "role": "USB"
+        },
+        {
+          "base": "0x5b600000",
+          "end_exclusive": "0x5c000000",
+          "size_mib": 10.0,
+          "role": "HOST"
+        },
+        {
+          "base": "0x5c000000",
+          "end_exclusive": "0x5c800000",
+          "size_mib": 8.0,
+          "role": "CAPTURERECIPE"
+        },
+        {
+          "base": "0x5c800000",
+          "end_exclusive": "0x5cc00000",
+          "size_mib": 4.0,
+          "role": "FACEDETECT"
+        },
+        {
+          "base": "0x5cc00000",
+          "end_exclusive": "0x5cd00000",
+          "size_mib": 1.0,
+          "role": "IQ"
+        },
+        {
+          "base": "0x5cd00000",
+          "end_exclusive": "0x5cd20000",
+          "size_mib": 0.125,
+          "role": "PPU"
+        },
+        {
+          "base": "0x5cd20000",
+          "end_exclusive": "0x5d520000",
+          "size_mib": 8.0,
+          "role": "AF"
+        },
+        {
+          "base": "0x5d520000",
+          "end_exclusive": "0x5d7a0000",
+          "size_mib": 2.5,
+          "role": "APP"
+        },
+        {
+          "base": "0x5d7a0000",
+          "end_exclusive": "0x5d8a0000",
+          "size_mib": 1.0,
+          "role": "INFO"
+        },
+        {
+          "base": "0x5d8a0000",
+          "end_exclusive": "0x80000000",
+          "size_mib": 551.375,
+          "role": "IMAGE1"
+        }
+      ],
+      "safe": false
+    },
+    "candidate_split_1gib": {
+      "status": "design candidate, hardware safety unverified; no patch produced",
+      "additional_bank": {
+        "base": "0xaa000000",
+        "end_exclusive": "0xe0000000",
+        "size_mib": 864.0
+      },
+      "total_linux_ram_mib": 1024,
+      "retained_IMAGE2": {
+        "base": "0xa0000000",
+        "end_exclusive": "0xaa000000",
+        "size_mib": 160.0
+      },
+      "IMAGE2_capacity_reduction_percent": 84.375,
+      "IMAGE2_size_instruction": {
+        "runtime_address": "0x538e3c44",
+        "decoded_offset": "0x8fb954",
+        "original_hex": "0131a0e3"
+      },
+      "display_configs": [
+        {
+          "base": "0xa93d4000",
+          "end_exclusive": "0xa9758000",
+          "size_mib": 3.515625,
+          "node": "/fb@28906000/qqvga",
+          "within_retained_IMAGE2": true
+        },
+        {
+          "base": "0xa962c000",
+          "end_exclusive": "0xa9b72000",
+          "size_mib": 5.2734375,
+          "node": "/fb@28902000/fhd-vga",
+          "within_retained_IMAGE2": true
+        },
+        {
+          "base": "0xa962c000",
+          "end_exclusive": "0xa9b72000",
+          "size_mib": 5.2734375,
+          "node": "/fb@28902000/fhd",
+          "within_retained_IMAGE2": true
+        },
+        {
+          "base": "0xa962c000",
+          "end_exclusive": "0xa9b72000",
+          "size_mib": 5.2734375,
+          "node": "/fb@28902000/fhd4444",
+          "within_retained_IMAGE2": true
+        },
+        {
+          "base": "0xa962c000",
+          "end_exclusive": "0xa9b72000",
+          "size_mib": 5.2734375,
+          "node": "/fb@28902000/hd",
+          "within_retained_IMAGE2": true
+        },
+        {
+          "base": "0xa962c000",
+          "end_exclusive": "0xa9b72000",
+          "size_mib": 5.2734375,
+          "node": "/fb@28902000/4k",
+          "within_retained_IMAGE2": true
+        },
+        {
+          "base": "0xa962c000",
+          "end_exclusive": "0xa9b72000",
+          "size_mib": 5.2734375,
+          "node": "/fb@28902000/4k4444",
+          "within_retained_IMAGE2": true
+        }
+      ],
+      "prerequisites": [
+        "verify DDR controller windows and enabled capacity on the actual camera",
+        "audit all IMAGE2 allocation sizes, minimum capacity and independent DMA users",
+        "verify bootloader, Linux driver mappings and shared-memory address contracts",
+        "validate cold boot, still/RAW/JPEG/burst/video/playback under the smaller pool",
+        "establish recovery for a firmware that fails before normal update mode",
+        "verify firmware repack/update integrity checks"
+      ]
+    },
+    "camera_memory_written": false,
+    "firmware_patched": false,
+    "camera_installable": false
+  },
+  "historical_kernel_layout_tests": {
+    "continuous": {
+      "MemTotal_KiB": 1027832,
+      "system_ram_ranges": [
+        "40000000-7fffffff"
+      ],
+      "log_sha256": "9ddfb62442118eed9f09bb1cac303938e0b8a895fb766de7647df082d5db6bf9",
+      "scope": "synthetic QEMU virt, kernel only"
+    },
+    "split": {
+      "kernel_sha256": "9e6bdf2174b6beec0252ce4c8d58ccdb5a13631401f48e10b4e4d2553d2c9eca",
+      "qemu_version": "QEMU emulator version 11.1.2",
+      "qemu_backing_ram_mib": 2560,
+      "linux_declared_ram_mib": 1024,
+      "MemTotal_KiB": 1028408,
+      "HighTotal_KiB": 786432,
+      "system_ram_ranges": [
+        "40000000-42ffffff",
+        "44f00000-4befffff",
+        "aa000000-dfffffff"
+      ],
+      "guest_command_exit": 0,
+      "userspace_ready": true,
+      "log_sha256": "325cec804be2429445d1c4fd1ea39ecd0d2a3730cdce51e83eed5b05dc4d1870",
+      "scope": "synthetic QEMU virt; kernel capacity/layout test only, no RTOS or camera safety test"
+    },
+    "excluded_trial": "qemu-split-1gib.log: QEMU overwrote the supplied DTB memory node; 2560 MiB recognized; not split-layout evidence"
+  },
+  "limits": [
+    "No firmware, extracted kernel/configuration, raw camera readback or serial number is included.",
+    "Kernel layout tests ran on synthetic QEMU hardware; RTOS, ISP, DMA and camera functionality were not tested.",
+    "Runtime tools were removed at the user request; only the static audit remains available."
+  ]
+}

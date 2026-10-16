@@ -9,6 +9,8 @@ Run commands from the repository root. Paths are unchanged so existing scripts a
 | Tool | Purpose / 用途 | Access / 操作范围 |
 | --- | --- | --- |
 | [inspect_firmware.py](inspect_firmware.py) | Header, checksum and frame decoding / 包头、校验及帧解码 | Local files only; writes decoded output when requested / 仅本地文件，可输出解码载荷 |
+| [gr4_firmware_parts.py](gr4_firmware_parts.py) | Shared update decoder and embedded component detection / 更新包解码与内嵌组件检测 | Local files only; shared module / 仅本地文件，共用模块 |
+| [audit_gr4_linux_memory.py](audit_gr4_linux_memory.py) | Linux RAM banks, kernel configuration and 15 RTOS pools / Linux 内存、内核配置与 15 个 RTOS 池 | Read-only pinned GR IV 1.11.10.7 sample; requires Capstone / 固定样本只读审计，需 Capstone |
 | [mtp_probe_readonly.py](mtp_probe_readonly.py) | Device and storage queries / 设备及存储查询 | USB read-only; requires PyUSB / USB 只读，需 PyUSB |
 | [ic_probe_readonly.swift](ic_probe_readonly.swift) | ImageCaptureCore enumeration / 相机枚举 | macOS device session, read-only / macOS 设备会话，只读 |
 | [gr4_model.py](gr4_model.py) | Product-header identification / 产品头识别 | Host-side eight-byte input; no camera access / 电脑端八字节输入 |
@@ -32,3 +34,7 @@ These generators write local files; they do not install firmware or automaticall
 Use Python 3.10+ for all Python tools and tests. Basic inspection and entry generation need only the standard library. Install Pillow for image encoding and PyUSB for MTP queries. The Swift probe requires a macOS Swift toolchain and ImageCaptureCore.
 
 整套 Python 工具和测试使用 Python 3.10+。基础检查和入口生成只需标准库，图片编码需 Pillow，MTP 查询需 PyUSB；Swift 探针需 macOS Swift 工具链及 ImageCaptureCore。
+
+The [1 GiB memory report](../docs/research/2026-10-13-gr4-linux-1gib-memory.md) documents a candidate repartition and historical kernel layout tests. Its static audit does not patch firmware or access a camera. Install Capstone with `python3 -m pip install capstone`; obtain the firmware sample separately.
+
+[1 GiB 内存研究](../docs/research/2026-10-13-gr4-linux-1gib-memory.md)记录候选分区及历史内核布局实验。静态工具不修改固件、不连接相机；需自行取得固件并安装 Capstone。

@@ -10,6 +10,7 @@ The reports below document existing findings. Static addresses refer to the reco
 | --- | --- | --- |
 | Container headers, versions, frame decoding and checksum / 容器结构与校验 | Local GR IV 1.11 sample / 本地样本分析 | [Firmware package / 固件更新包](../firmware-and-shutdown-image-research.md#固件更新包) |
 | RTOS mapping, Linux device tree and memory / RTOS 与 Linux 内存布局 | Static analysis; chip capacity discussed separately / 静态分析，物理容量另作讨论 | [Memory map / 内存映射](../firmware-and-shutdown-image-research.md#a7linux-内存映射) |
+| Linux RAM expansion to 1 GiB / Linux 扩容到 1 GiB | Original kernel booted with a split layout in QEMU; IMAGE2 repartition untested on camera / 原厂内核分段布局离线启动成功，缩小 IMAGE2 尚未验证机身功能 | [Memory feasibility / 内存可行性](2026-10-13-gr4-linux-1gib-memory.md) |
 | USB descriptors and MTP capabilities / USB 与 MTP 能力 | Read-only queries on one GR IV / 单台只读查询 | [USB/MTP](../firmware-and-shutdown-image-research.md#usbmtp-调查) |
 | Camera Mode persistence and consumers / Debug 持久化与消费者 | Static control-flow tracing / 静态控制流追踪 | [Debug analysis / Debug 分析](../gr4-debug-mode-analysis.md) |
 | Version-page startup and key events / Version 页与按键事件 | Static tracing plus a verified startup gesture / 静态追踪及已验证入口 | [Version page / Version 入口](../gr4-debug-mode-analysis.md#开机代码-4-的来源与实机验证) |
